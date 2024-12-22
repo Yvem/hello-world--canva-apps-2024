@@ -3,6 +3,24 @@ import {FormattedMessage, useIntl} from 'react-intl'
 import * as styles from 'styles/components.css'
 import {useAddElement} from 'utils/use_add_element'
 
+import { LIB } from './consts'
+import { explore_browser_context } from './env-debug'
+import { useSelection } from 'utils/use_selection_hook'
+
+
+/////////////////////////////////////////////////
+
+import { LSKⵧCOLORⵧBG } from './x-logger'
+switch (true) {
+	case (self.location.hostname.startsWith('app-aagy7u8y7zq.')):
+		localStorage.setItem(LSKⵧCOLORⵧBG, 'bisque')
+		break
+	case (self.location.hostname.startsWith('app-aagzhuqsatm.')):
+		localStorage.setItem(LSKⵧCOLORⵧBG, 'lightcyan')
+		break
+	default:
+		break
+}
 
 /////////////////////////////////////////////////
 
@@ -15,10 +33,13 @@ import * as canvaⳇuser from '@canva/user'
 import * as canvaⳇapp_i18n_kit from '@canva/app-i18n-kit'
 import * as canvaⳇapp_ui_kit from '@canva/app-ui-kit'
 
-const APP_DEBUG_ID = 'XXX CANVA APP XXX'
 
-function explore_browser_context() {
-	console.log(`${APP_DEBUG_ID}`, {
+async function get_info_on_selection(...selections: any) {
+	console.xgroup(`[${LIB}] get_info_on_selection()...`)
+
+	console.xlog(`[${LIB}] selections =`, selections)
+
+	console.xlog(`[${LIB}] Canva APIs =`, {
 		canvaⳇasset,
 		canvaⳇdesign,
 		canvaⳇerror,
@@ -28,13 +49,36 @@ function explore_browser_context() {
 		canvaⳇapp_ui_kit,
 	})
 
-	// TODO check top frame
+	selections.forEach((selection: any) => {
+		if (selection.count === 0)
+			return
+
+		selection.read().then(x => {
+			console.xlog(`[${LIB}] selection.read() =`, selection, x)
+		})
+	})
+
+	const context = canvaⳇplatform.appProcess.current.getInfo();
+	const userToken = await canvaⳇuser.auth.getCanvaUserToken();
+	const designToken = await canvaⳇdesign.getDesignToken();
+
+	console.xlog(`[${LIB}] Canva infos: =`, {
+		context,
+		userToken,
+		designToken,
+	})
+
+	console.xgroupEnd()
 }
 
 /////////////////////////////////////////////////
 
 export const App = () => {
-	console.log(`${APP_DEBUG_ID} refresh...`)
+	console.xlog(`[${LIB}] <App> render...`)
+
+	const selectionⵧplaintext = useSelection('plaintext')
+	const selectionⵧimage = useSelection('image')
+	const selectionⵧvideo = useSelection('video')
 
 	const addElement = useAddElement()
 
@@ -47,25 +91,39 @@ export const App = () => {
 
 	const intl = useIntl()
 
+	const url‿obj = new URL(window.location.href);
+
+
 	return (
 		<div className={styles.scrollContainer}>
 			<Rows spacing="2u">
 
 				<Text>
-					<FormattedMessage
-						defaultMessage="Hello, world!"
-						description="Instructions for how to make changes to the app. Do not translate <code>src/app.tsx</code>."
-						values={{
-							code: (chunks) => <code>{chunks}</code>,
-						}}
-					/>
+					<strong>{self.origin}</strong><br/>
+				</Text>
+				<Text>
+					<em>LS `<code>PRETEND-API-KEY</code>` = <code>{(() => {
+						try {
+							return localStorage.getItem('PRETEND-API-KEY') || '[EMPTY]'
+						}
+						catch {
+							return '[ERROR]'
+						}
+					})()}</code></em><br/>
+				</Text>
+				<Text>
+					This is a TEST app currently served from: `<code>{url‿obj.hostname}</code>`.
 				</Text>
 				<Button variant="primary" onClick={onClick} stretch>
 					{intl.formatMessage({
-						defaultMessage: 'Do something cool',
+						defaultMessage: 'Insert "Hello World"',
 						description:
 							'Button text to do something cool. Creates a new text element when pressed.',
 					})}
+				</Button>
+
+				<Button variant="secondary" onClick={() => get_info_on_selection(selectionⵧplaintext, selectionⵧimage, selectionⵧvideo)}>
+					Get Info on selection
 				</Button>
 
 				<Button variant="secondary" onClick={explore_browser_context}>
@@ -76,16 +134,7 @@ export const App = () => {
 					})}
 				</Button>
 				<Text>
-					<FormattedMessage
-						defaultMessage="
-              To make changes to this app, edit the <code>src/app.tsx</code> file,
-              then close and reopen the app in the editor to preview the changes.
-            "
-						description="Instructions for how to make changes to the app. Do not translate <code>src/app.tsx</code>."
-						values={{
-							code: (chunks) => <code>{chunks}</code>,
-						}}
-					/>
+					That's all for now...
 				</Text>
 			</Rows>
 		</div>
