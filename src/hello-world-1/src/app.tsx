@@ -101,16 +101,18 @@ export const App = () => {
 				<Text>
 					<strong>{self.origin}</strong><br/>
 				</Text>
+
 				<Text>
 					<em>LS `<code>PRETEND-API-KEY</code>` = <code>{(() => {
 						try {
 							return localStorage.getItem('PRETEND-API-KEY') || '[EMPTY]'
 						}
 						catch {
-							return '[ERROR]'
+							return '[LS ERROR]'
 						}
 					})()}</code></em><br/>
 				</Text>
+
 				<Text>
 					This is a TEST app currently served from: `<code>{url‿obj.hostname}</code>`.
 				</Text>
