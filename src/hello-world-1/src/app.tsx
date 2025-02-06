@@ -7,20 +7,7 @@ import { LIB } from './consts'
 import { explore_browser_context } from './env-debug'
 import { useSelection } from 'utils/use_selection_hook'
 
-
-/////////////////////////////////////////////////
-
-import { LSKⵧCOLORⵧBG } from './x-logger'
-switch (true) {
-	case (self.location.hostname.startsWith('app-aagy7u8y7zq.')):
-		localStorage.setItem(LSKⵧCOLORⵧBG, 'bisque')
-		break
-	case (self.location.hostname.startsWith('app-aagzhuqsatm.')):
-		localStorage.setItem(LSKⵧCOLORⵧBG, 'lightcyan')
-		break
-	default:
-		break
-}
+console.xdebug(`[${LIB}/app.tsx] Hello!`)
 
 /////////////////////////////////////////////////
 
@@ -33,6 +20,9 @@ import * as canvaⳇuser from '@canva/user'
 import * as canvaⳇapp_i18n_kit from '@canva/app-i18n-kit'
 import * as canvaⳇapp_ui_kit from '@canva/app-ui-kit'
 
+
+const context = canvaⳇplatform.appProcess.current.getInfo();
+console.xlog(`canva context =`, context)
 
 async function get_info_on_selection(...selections: any) {
 	console.xgroup(`[${LIB}] get_info_on_selection()...`)
@@ -58,11 +48,12 @@ async function get_info_on_selection(...selections: any) {
 		})
 	})
 
-	const context = canvaⳇplatform.appProcess.current.getInfo();
+	const platformInfos = canvaⳇplatform.getPlatformInfo()
 	const userToken = await canvaⳇuser.auth.getCanvaUserToken();
 	const designToken = await canvaⳇdesign.getDesignToken();
 
 	console.xlog(`[${LIB}] Canva infos: =`, {
+		platformInfos,
 		context,
 		userToken,
 		designToken,
@@ -73,8 +64,12 @@ async function get_info_on_selection(...selections: any) {
 
 /////////////////////////////////////////////////
 
-export const App = () => {
-	console.xlog(`[${LIB}] <App> render...`)
+interface Props {
+	caller?: string
+}
+
+export const App = (props: Props) => {
+	console.xlog(`[${LIB}] 🔄 <App />`)
 
 	const selectionⵧplaintext = useSelection('plaintext')
 	const selectionⵧimage = useSelection('image')
@@ -95,12 +90,17 @@ export const App = () => {
 
 
 	return (
-		<div className={styles.scrollContainer}>
+		<div className={styles.scrollContainer} style={{userSelect: 'auto'}}>
 			<Rows spacing="2u">
-
 				<Text>
-					<strong>{self.origin}</strong><br/>
+					Hi from local test app!
 				</Text>
+
+				<ul>
+					<li>Served from: <strong><small><code>{self.origin}</code></small></strong></li>
+					<li>Current surface = <strong><small><code>{context?.surface}</code></small></strong></li>
+					<li>Called from = <strong><small><code>{props?.caller ?? '?'}</code></small></strong></li>
+				</ul>
 
 				<Text>
 					<em>LS `<code>PRETEND-API-KEY</code>` = <code>{(() => {
@@ -113,9 +113,8 @@ export const App = () => {
 					})()}</code></em><br/>
 				</Text>
 
-				<Text>
-					This is a TEST app currently served from: `<code>{url‿obj.hostname}</code>`.
-				</Text>
+
+
 				<Button variant="primary" onClick={onClick} stretch>
 					{intl.formatMessage({
 						defaultMessage: 'Insert "Hello World"',

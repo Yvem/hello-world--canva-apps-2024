@@ -3,6 +3,8 @@ const LIB = 'ENV'
 
 
 export function explore_browser_context() {
+	playWithIndexedb()
+
 	console.xlog(`[${LIB}]`, {
 		global: {
 			self, // https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope
@@ -43,6 +45,54 @@ export function explore_browser_context() {
 
 explore_browser_context()
 
+
+
+
+function playWithIndexedb() {
+	// TODO externalize
+	async function toPromise(req /** : IDBRequest */ ) {
+		const resolved = false
+
+		const { promise, resolve, reject } = Promise.withResolvers();
+
+		function try_to_resolve() {
+			if (req.readyState !== 'done')
+				return false
+
+			if (resolved)
+				return false
+
+			if (req.error) {
+				reject(error)
+				return true
+			}
+
+			const { result, transaction, source } = req
+			resolve([ result, transaction, source ])
+
+			return true
+		}
+
+		try_to_resolve()
+
+		if (!resolved) {
+			req.addEventListener('error', try_to_resolve)
+			req.addEventListener('success', try_to_resolve)
+
+			promise.finally(() => {
+				req.removeEventListener('error', try_to_resolve)
+				req.removeEventListener('success', try_to_resolve)
+			})
+		}
+
+		return promise
+	}
+
+	const { indexedDB } = globalThis
+
+	const ↆreq1 = toPromise(indexedDB.open('foo', 1))
+	const ↆreq2 = toPromise(indexedDB.open('bar', 3))
+}
 
 
 /*

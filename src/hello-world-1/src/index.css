@@ -1,9 +1,35 @@
-:root {
-	--o⋄color⁚co212__beige:   hsl(42, 100%, 87%); /* #FFEBBC */
-	--o⋄color⁚co212__blue:    hsl(185, 33%, 52%); /* #5DA7AE */
-	--o⋄color⁚co212__brown:   hsl(337, 16%, 28%); /* #543D46 */
-	--o⋄color⁚co212__dark:    hsl(248,  9%, 17%); /* #292830 */
+/* apply a natural box layout model to all elements, but allowing components to change
+ * https://www.paulirish.com/2012/box-sizing-border-box-ftw/
+ * https://github.com/mike-engel/a11y-css-reset/pull/12#issuecomment-516582884
+ */
+:root                  { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: inherit; }
 
-	background-color: var(--o⋄color⁚co212__beige);
-	color: var(--o⋄color⁚co212__brown);
+/* from https://clrs.cc/
+ * Good selection
+ */
+:root {
+	--o⋄color⁚clrscc__navy:    #001f3f;
+	--o⋄color⁚clrscc__blue:    #0074d9;
+	--o⋄color⁚clrscc__aqua:    #7fdbff;
+	--o⋄color⁚clrscc__teal:    #39cccc;
+	--o⋄color⁚clrscc__purple:  #b10dc9;
+	--o⋄color⁚clrscc__fuchsia: #f012be;
+	--o⋄color⁚clrscc__maroon:  #85144b;
+	--o⋄color⁚clrscc__red:     #ff4136;
+	--o⋄color⁚clrscc__orange:  #ff851b;
+	--o⋄color⁚clrscc__yellow:  #ffdc00;
+	--o⋄color⁚clrscc__olive:   #3d9970;
+	--o⋄color⁚clrscc__green:   #2ecc40;
+	--o⋄color⁚clrscc__lime:    #01ff70;
+	--o⋄color⁚clrscc__black:   #111111;
+	--o⋄color⁚clrscc__gray:    #aaaaaa;
+	--o⋄color⁚clrscc__silver:  #dddddd;
+	--o⋄color⁚clrscc__white:   #ffffff;
+}
+
+:root {
+	background-color: var(--o⋄color⁚clrscc__silver);
+	color: var(--o⋄color⁚clrscc__black);
+	border: solid 7px var(--o⋄color⁚clrscc__gray);
 }

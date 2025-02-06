@@ -9,12 +9,20 @@ if (!HAS_ALREADY_XLOGGER) {
 	console.xgroupEnd = (...args) => group(console.groupEnd.bind(console), ...args)
 
 	// reminder: 4 levels filter-able in browser = verbose, info, warning, error
+	// verbose
 	console.xdebug = (...args) => sink('debug', ...args)
+
+	// info
 	console.xinfo = (...args) => sink('info', ...args)
 	console.xlog = (...args) => sink('log', ...args)
-	console.xwarn = (...args) => sink('warn', ...args)
-	console.xerror = (...args) => sink('error', ...args)
 	console.xtrace = (...args) => sink('trace', ...args)
+
+	// warn
+	console.xwarn = (...args) => sink('warn', ...args)
+
+	// error
+	console.xerror = (...args) => sink('error', ...args)
+
 }
 
 /////////////////////////////////////////////////
@@ -101,7 +109,10 @@ function group(originalFn, ...args) {
 	originalFn(...console__call__args, ...args)
 }
 
+const isEnabled = true;
 function sink(console_method_name, ...args) {
+	if (!isEnabled) return
+
 	let console__call__args = [''] // str + corresponding % args, starting empty
 
 	if (!has_details_indicator(console_method_name)) {
@@ -163,18 +174,18 @@ function append_styled_string(console__call__args, str, ...styles) {
 	]
 }
 
-// TODO REVIEW doesn't work reliably
 function get_iframe_depth() {
-	// Empirically seen: walking up the tree of parents yields inconsistent results?? (why? TODO investigate)
-	// so we switch to a set
+	// Empirically seen: walking up the tree of parents yields inconsistent results
+	// (in the context of a dev local app)
+	// so we switched to a set:
 	const windows = new Set()
 
 
-	let current_window = self
+	let current_window = window
 	windows.add(current_window)
 
 	let ancestors_count = 0
-	while (current_window !== current_window.parent && ancestors_count<10) {
+	while (current_window !== current_window.parent && ancestors_count < 10) {
 		ancestors_count++
 		windows.add(current_window.parent)
 		current_window = current_window.parent
@@ -212,14 +223,17 @@ setInterval(() => {
 /////////////////////////////////////////////////
 
 console.xgroupCollapsed(`👋 Hi from freshly loaded x-logger from "${window.origin}" ↳depth=${IFRAME_DEPTH} 👋 ${HAS_ALREADY_XLOGGER ? '(⚠dupl)' : ''}`)
-console.xlog("origin =", window.origin)
 try {
 	console.xdebug('debug')
-	console.xerror('error')
-	console.xinfo('info')
+
 	console.xlog('log')
+	console.xinfo('info')
 	console.xtrace('trace')
+
 	console.xwarn('warn')
+
+	console.xerror('error')
+
 	console.xlog("LS keys =", Array.from({length: localStorage.length}, (item, index) => localStorage.key(index)))
 } catch {}
 console.xgroupEnd()
